@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <title>Detector de Ciberacoso</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    
+    #tweetTable td {
+      text-align: center;
+    }
+    .csv-upload {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    /* Center the form title */
+    .form-title {
+      text-align: center;
+    }
+    /* Make file input and button the same width */
+    .csv-upload input[type=file],
+    .csv-upload input[type=submit] {
+      width: 200px;
+      margin: 5px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">AI Cyberbullying Detector</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/visualizacion">Visualizar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar sesión</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+     <div class="csv-upload mt-4 mb-4">
+      <h2>Carga de datos CSV</h2>
+      <form method="post" action="/analizar_csv" enctype="multipart/form-data">
+        <div class="form-group">
+          <input type="file" class="form-control-file" id="csvFile" name="file">
+        </div>
+        <input type="submit" value="Analizar CSV" class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center;">
+      </form>
+    </div>
+     <h2 class="form-title">Formulario de entrada de datos</h2>
+    <form method="post" class="mt-4">
+      <div class="form-group">
+        <input name="autor" class="form-control" placeholder="Posible victima" value="{{ tweet_to_edit.autor if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <textarea name="comentario" class="form-control" placeholder="Comentario">{{ tweet_to_edit.comentario if tweet_to_edit }}</textarea>
+      </div>
+      <div class="form-group">
+        <input name="genero" class="form-control" placeholder="Género" value="{{ tweet_to_edit.genero if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="orientacion_sexual" class="form-control" placeholder="Orientación Sexual" value="{{ tweet_to_edit.orientacion_sexual if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="grupo_etareo" class="form-control" placeholder="Grupo Etareo" value="{{ tweet_to_edit.grupo_etareo if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="estrato" class="form-control" placeholder="Estrato" value="{{ tweet_to_edit.estrato if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="discapacidad" class="form-control" placeholder="Discapacidad" value="{{ tweet_to_edit.discapacidad if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="victima_del_conflicto" class="form-control" placeholder="Víctima del Conflicto" value="{{ tweet_to_edit.victima_del_conflicto if tweet_to_edit }}">
+      </div>
+      <div class="form-group">
+        <input name="red_de_apoyo" class="form-control" placeholder="Red de Apoyo" value="{{ tweet_to_edit.red_de_apoyo if tweet_to_edit }}">
+      </div>
+      <input type="submit" value="Guardar Datos" class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; width: 200px; margin: 5px auto;">
+    </form>
+
+    <table id="tweetTable" class="table mt-4">
+      <thead>
+        <tr>
+          <th>Posible Victima</th>
+          <th>Comentario</th>
+          <th>Género</th>
+          <th>Orientación Sexual</th>
+          <th>Grupo Etareo</th>
+          <th>Estrato</th>
+          <th>Discapacidad</th>
+          <th>Víctima del Conflicto</th>
+          <th>Red de Apoyo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for tweet in tweets %}
+    <tr>
+      <td>{{ tweet.autor }}</td>
+      <td>{{ tweet.comentario }}</td>
+      <td>{{ tweet.genero }}</td>
+      <td>{{ tweet.orientacion_sexual }}</td>
+      <td>{{ tweet.grupo_etareo }}</td>
+      <td>{{ tweet.estrato }}</td>
+      <td>{{ tweet.discapacidad }}</td>
+      <td>{{ tweet.victima_del_conflicto }}</td>
+      <td>{{ tweet.red_de_apoyo }}</td>
+      <td>
+        <a href="{{ url_for('edit_tweet', id=tweet.id) }}" class="btn btn-link"><i class="fas fa-edit"></i></a>
+        <a href="{{ url_for('delete_tweet', id=tweet.id) }}" class="btn btn-link text-danger"><i class="fas fa-trash-alt"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+    </table>
+
+    <a href="/analizar" class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; width: 200px; margin: 5px auto;">Analizar Tabla</a> <br/>
+  </div>
+  <form>
+  <div class="form-group">
+
+  </div>
+  </form>
+
+  <script>
+    $(document).ready( function () {
+      $('#tweetTable').DataTable();
+    } );
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
